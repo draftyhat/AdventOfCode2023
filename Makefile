@@ -1,7 +1,16 @@
-# make day 1 executable: make 1
-# make day 1 executable, part 2: make 1p2
-# make day 1 debug executable: make 1
-# make day 1 debug executable, part 2: make debug1p2
+# make 1: make day 1 executable
+# make 1p2: make day 1 executable, part 2
+# make debug1: make day 1 debug executable
+# make debug1p2: make day 1 debug executable, part 2
+# make run1: make and run day 1 executable
+# make run1p2: make and run day 1 executable, part 2
+# make test1: make and run day 1 executable over test input
+# make test1p2: make and run day 1 part 2 executable over test input
+# make dbg1: make and run debug day 1 executable
+# make dbg1p2: make and run debug day 1 executable, part 2
+# make dbgtest1: make and run debug day 1 executable over test input
+# make dbgtest1p2: make and run debug day 1 executable, part 2 over test input
+# make clean
 
 CC = gcc
 _CFLAGS = $(CFLAGS) -Wall
@@ -14,15 +23,17 @@ debug%:
 %p2:
 	make CFLAGS="-DPART2 $(CFLAGS)" $*
 
-$(YEAR)_01 $(YEAR)_02 $(YEAR)_03 $(YEAR)_04 $(YEAR)_05 $(YEAR)_06 $(YEAR)_07 $(YEAR)_08 $(YEAR)_09 $(YEAR)_10 $(YEAR)_12 $(YEAR)_14 $(YEAR)_16 $(YEAR)_17 $(YEAR)_18 $(YEAR)_19 $(YEAR)_21 $(YEAR)_22 $(YEAR)_23 $(YEAR)_24: %: %.c
-	$(CC) $(DEBUG) $(_CFLAGS) -o $@ $<
-$(YEAR)_11 $(YEAR)_13 $(YEAR)_15 $(YEAR)_20: %: %.o grid.o
-	$(CC) $(DEBUG) $(_CFLAGS) -o $@ $^
-$(YEAR)_25: %: %.o chargrid.o
-	$(CC) $(DEBUG) $(_CFLAGS) -o $@ $^
+$(YEAR)_%: $(YEAR)_%.c grid.o chargrid.o get_next_line.o
+	$(CC) $(DEBUG) -Iinclude $(_CFLAGS) -o $@ $^
 
+run%: %
+	./$(YEAR)_`printf %02d $*` input/input_$(YEAR)_`printf %02d $*`
+dbg%: debug%
+	./$(YEAR)_`printf %02d $*` input/input_$(YEAR)_`printf %02d $*`
 test%: %
-	cat test/$(YEAR)_`printf %02d $*`_test | ./$(YEAR)_`printf %02d $*`
+	./$(YEAR)_`printf %02d $*` test/test_$(YEAR)_`printf %02d $*`
+dbgtest%: debug%
+	./$(YEAR)_`printf %02d $*` test/test_$(YEAR)_`printf %02d $*`
 
 1 2 3 4 5 6 7 8 9: %: $(YEAR)_0%
 10 11 12 13 14 15 16 17 18 19: %: $(YEAR)_%
@@ -37,7 +48,9 @@ test10 test11 test12 test13 test14 test15 test16 test17 test18 test19: test%: $(
 test20 test21 test22 test23 test24 test25 test26 test27 test28 test29: test%: $(YEAR)_%
 test30 test31: test%: $(YEAR)_%
 
-%grid.o: lib/%grid.c include/%grid.h
+%rid.o: lib/%rid.c include/%rid.h
+	$(CC) -c $(_CFLAGS) -Iinclude -o $@ $<
+get_next_line.o: lib/get_next_line.c include/get_next_line.h
 	$(CC) -c $(_CFLAGS) -Iinclude -o $@ $<
 
 $(YEAR)_%.o: $(YEAR)_%.c
