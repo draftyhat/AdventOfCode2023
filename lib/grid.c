@@ -102,7 +102,7 @@ void create_grid(struct grid * g, int width, int height, int default_value)
     }
 }
 
-int read_grid(struct grid * g, int *translation)
+int read_grid(FILE * fp, struct grid * g, int *translation)
 {
     char line[4096];
     int * rows[1000];
@@ -111,7 +111,7 @@ int read_grid(struct grid * g, int *translation)
     int i;
 
     /* read the first line, figure out how wide our grid is */
-    scanf_retval = scanf("%s", line);
+    scanf_retval = fscanf(fp, "%s", line);
     g->width = strlen(line);
     DBGPRINT_GRID("DBG grid: width %d\n", g->width);
 
@@ -140,7 +140,7 @@ int read_grid(struct grid * g, int *translation)
         DBGPRINT_GRID("\n");
 
         /* read next line */
-        scanf_retval = scanf("%s", line);
+        scanf_retval = fscanf(fp, "%s", line);
         rown++;
     }
 

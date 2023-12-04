@@ -33,7 +33,7 @@ int chargrid_get_left(char * value, int * newx, int * newy,
 void create_chargrid(struct chargrid * g, int width, int height, char
         default_value);
 
-int read_chargrid(struct chargrid * g, char * translation);
+int read_chargrid(FILE * fp, struct chargrid * g, char * translation);
 /* allocate more chargrid space. move current chargrid to x0, y0, and extend
  * dimensions */
 int extend_chargrid(struct chargrid * g, int new_width, int new_height, int x0,

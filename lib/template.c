@@ -41,7 +41,6 @@ int main(int argc, char ** argv)
     if(fd < 0) {
         DBGPRINT("Error opening file \"%s\": %s\n",
                 argv[1], strerror(errno));
-        close(fd);
         return -1;
     }
 

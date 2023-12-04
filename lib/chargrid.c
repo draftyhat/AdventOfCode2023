@@ -103,7 +103,7 @@ void create_chargrid(struct chargrid * g, int width, int height,
     }
 }
 
-int read_chargrid(struct chargrid * g, char * translation)
+int read_chargrid(FILE * fp, struct chargrid * g, char * translation)
 {
     char line[4096];
     char * rows[1000];
@@ -112,7 +112,7 @@ int read_chargrid(struct chargrid * g, char * translation)
     int i;
 
     /* read the first line, figure out how wide our chargrid is */
-    scanf_retval = scanf("%s", line);
+    scanf_retval = fscanf(fp, "%s", line);
     g->width = strlen(line);
     DBGPRINT_CHARGRID("DBG chargrid: width %d\n", g->width);
 
@@ -141,7 +141,7 @@ int read_chargrid(struct chargrid * g, char * translation)
         DBGPRINT_CHARGRID("\n");
 
         /* read next line */
-        scanf_retval = scanf("%s", line);
+        scanf_retval = fscanf(fp, "%s", line);
         rown++;
     }
 
