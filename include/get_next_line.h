@@ -17,9 +17,9 @@
  ** @param line buffer to read into
  ** @return length of line read; -1 upon error, 0 if no more bytes
  **/
-size_t get_next_line(
+ssize_t get_next_line(
         int fd,
         char * line,
-        const size_t linesize);
+        const ssize_t linesize);
 
 #endif  /* #ifndef GET_NEXT_LINE_H */

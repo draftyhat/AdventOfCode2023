@@ -7,9 +7,9 @@
 /* returns a new line
  * -1 upon error, 0 if no more bytes
  */
-size_t get_next_line(int fd, char * line, const size_t linesize)
+ssize_t get_next_line(int fd, char * line, const size_t linesize)
 {
-    size_t read_bytes;
+    ssize_t read_bytes;
 
     /* read all data into line */
     read_bytes = read(fd, line, linesize);
@@ -21,12 +21,12 @@ size_t get_next_line(int fd, char * line, const size_t linesize)
     }
 
     /* find first newline */
-    for(size_t i=0; i < read_bytes; i++) {
+    for(ssize_t i=0; i < read_bytes; i++) {
         if(line[i] == '\n') {
             line[i] = '\0';
             /* seek file back to start of next line */
             lseek(fd, i - read_bytes + 1, SEEK_CUR);
-            return i;
+            return i + 1;
         }
     }
 
