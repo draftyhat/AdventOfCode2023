@@ -19,7 +19,7 @@ YEAR=2023
 all: 1
 
 debug%:
-	make CFLAGS="-DDEBUG $(CFLAGS)" $*
+	make CFLAGS="-DDEBUG -g $(CFLAGS)" $*
 %p2:
 	make CFLAGS="-DPART2 $(CFLAGS)" $*
 

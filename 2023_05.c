@@ -27,8 +27,8 @@ int main(int argc, char ** argv)
     ssize_t line_size = 0;
     int fd;
 #ifdef PART2
-    long seeds[100], next_seeds[100], smallest_seed;
-    long seed_range_lengths[100], next_seed_range_lengths[100];
+    long seeds[1000], next_seeds[1000], smallest_seed;
+    long seed_range_lengths[1000], next_seed_range_lengths[1000];
     int nnext_seeds;
 #else
     long seeds[30], next_seeds[30], smallest_seed;
@@ -76,14 +76,14 @@ int main(int argc, char ** argv)
         nseeds++;
     }
 
-    printf("seeds:");
+    DBGPRINT("seeds:");
     for(int i=0; i < nseeds; i++) {
-        printf(" %ld", seeds[i]);
+        DBGPRINT(" %ld", seeds[i]);
 #ifdef PART2
-        printf("-%ld", seed_range_lengths[i]);
+        DBGPRINT(":%ld", seed_range_lengths[i]);
 #endif
     }
-    printf("\n");
+    DBGPRINT("\n");
 
     memcpy(next_seeds, seeds, sizeof(seeds));
 #ifdef PART2
@@ -100,21 +100,21 @@ int main(int argc, char ** argv)
 
         /* check for map line */
         if(strcmp("map:", &line[line_size - sizeof("map:")]) == 0) {
-            printf("Reading %s\n", line);
+            DBGPRINT("Reading %s\n", line);
             memcpy(seeds, next_seeds, sizeof(seeds));
 #ifdef PART2
             memcpy(seed_range_lengths, next_seed_range_lengths,
                     sizeof(next_seed_range_lengths));
             nseeds = nnext_seeds;
 #endif
-            printf("seeds: ");
+            DBGPRINT("seeds: ");
             for(int i=0; i < nseeds; i++) {
-                printf(" %ld", seeds[i]);
+                DBGPRINT(" %ld", seeds[i]);
 #ifdef PART2
-                printf("-%ld", seed_range_lengths[i]);
+                DBGPRINT(":%ld", seed_range_lengths[i]);
 #endif
             }
-            printf("\n");
+            DBGPRINT("\n");
             continue;
         }
 
@@ -130,28 +130,47 @@ int main(int argc, char ** argv)
                 if(seeds[i] + seed_range_lengths[i] >= source_range_start) {
                     /* some of this range is before the source range, some
                      * inside, and maybe some after */
+                    /*  part of the range before the source range */
+                    DBGPRINT("  original %ld:%ld\n",
+                            seeds[i], seed_range_lengths[i]);
+                    DBGPRINT("  transform range %ld:%ld -> %ld\n",
+                            source_range_start, range_length,
+                            destination_range_start);
+                    next_seed_range_lengths[i] = source_range_start - seeds[i];
+                    DBGPRINT("    area before the transform range %ld:%ld\n",
+                            next_seeds[i], next_seed_range_lengths[i]);
                     if(seeds[i] + seed_range_lengths[i] < source_range_start + range_length) {
                         /* no parts of this range after the source range */
-                        /*  part of the range before the source range */
-                        next_seed_range_lengths[i] = source_range_start - seeds[i];
                         /*  part of the range inside the source range */
                         next_seeds[nnext_seeds] = destination_range_start;
-                        next_seed_range_lengths[nnext_seeds] = range_length - (source_range_start - seeds[i]);
+                        next_seed_range_lengths[nnext_seeds] = seed_range_lengths[i] - (source_range_start - seeds[i]);
                         nnext_seeds++;
+#if 0
+                        DBGPRINT("range %ld:%ld -> %ld:%ld, %ld:%ld\n",
+                                seeds[i], seed_range_lengths[i],
+                                next_seeds[i], next_seed_range_lengths[i],
+                                next_seeds[nnext_seeds - 1],
+                                next_seed_range_lengths[nnext_seeds - 1]);
+                        DBGPRINT("  next range length calculation:\n");
+                        DBGPRINT("     range length %ld\n", range_length);
+                        DBGPRINT("     source_range_start %ld\n", source_range_start);
+                        DBGPRINT("     seeds[i] %ld\n", seeds[i]);
+                        DBGPRINT("     source_range_start - seeds[i] %ld\n", source_range_start - seeds[i]);
+#endif
                     } else {
                         /* this range consumes the source range */
-                        /*  part of the range before the source range */
-                        next_seed_range_lengths[i] = source_range_start - seeds[i];
                         /*  the source range */
                         next_seeds[nnext_seeds] = destination_range_start;
                         next_seed_range_lengths[nnext_seeds] = range_length;
                         nnext_seeds++;
+DBGPRINT("    area intersecting %ld:%ld\n", next_seeds[nnext_seeds - 1], next_seed_range_lengths[nnext_seeds - 1]);
                         /*  part of the range after the source range */
-                        next_seeds[nnext_seeds] = destination_range_start + range_length;
-                        next_seed_range_lengths[nnext_seeds] = seed_range_lengths[nnext_seeds] - range_length - (source_range_start - seeds[i]);
+                        next_seeds[nnext_seeds] = source_range_start + range_length;
+                        next_seed_range_lengths[nnext_seeds] = seeds[i] + seed_range_lengths[i] - (source_range_start + range_length);
                         nnext_seeds++;
+DBGPRINT("    area to right %ld:%ld\n", next_seeds[nnext_seeds - 1], next_seed_range_lengths[nnext_seeds - 1]);
                     }
-                } /* else the first seed in this range is above the source range */
+                } /* else the last seed in this range is below the source range */
             } else {
                 if(seeds[i] < source_range_start + range_length) {
                     /* first seed is in source range */
@@ -164,12 +183,16 @@ int main(int argc, char ** argv)
                         /*  part of the range within the source range */
                         next_seeds[i] = destination_range_start + (seeds[i] - source_range_start);
                         next_seed_range_lengths[i] = source_range_start + range_length - seeds[i];
+DBGPRINT("  range %ld:%ld  intersecting and after %ld:%ld, dest %ld\n",
+        seeds[i], seed_range_lengths[i], source_range_start, range_length, destination_range_start);
+DBGPRINT("    area inside %ld:%ld\n", next_seeds[i], next_seed_range_lengths[i]);
                         /*  part of the range after the source range */
                         next_seeds[nnext_seeds] = source_range_start + range_length;
                         next_seed_range_lengths[nnext_seeds] =
                             (seeds[i] + seed_range_lengths[i])
                             - (source_range_start + range_length);
                         nnext_seeds++;
+DBGPRINT("    area on top %ld:%ld\n", next_seeds[nnext_seeds - 1], next_seed_range_lengths[nnext_seeds - 1]);
                     }
                 } /* else first seed is beyond range */
             }
@@ -183,14 +206,14 @@ int main(int argc, char ** argv)
         }
     }
 
-    printf("seeds: ");
+    DBGPRINT("%i seeds: ", nseeds);
     for(int i=0; i < nseeds; i++) {
-        printf(" %ld", next_seeds[i]);
+        DBGPRINT("[%d]: %ld", i, next_seeds[i]);
 #ifdef PART2
-        printf("-%ld", seed_range_lengths[i]);
+        DBGPRINT(":%ld\n", seed_range_lengths[i]);
 #endif
     }
-    printf("\n");
+    DBGPRINT("\n");
 
     smallest_seed = next_seeds[0];
     for(int i=1; i < nseeds; i++) {
