@@ -109,7 +109,8 @@ void convert_double_columns(struct chargrid * g)
 long get_shortest_path_length(
         struct chargrid * g,
         struct galaxy * galaxy0,
-        struct galaxy * galaxy1)
+        struct galaxy * galaxy1,
+        const long expander)
 {
     long retval = 0;
     int step_x = 1, step_y = 1;
@@ -129,7 +130,7 @@ long get_shortest_path_length(
         ch = chargrid_get_value(g, x, 0);
         retval++;
         if(ch == DOUBLE_WIDE || ch == DOUBLE)
-            retval++;
+            retval += expander;
     }
 
     /* count # steps for each row */
@@ -139,7 +140,7 @@ long get_shortest_path_length(
         ch = chargrid_get_value(g, 0, y);
         retval++;
         if(ch == DOUBLE_TALL || ch == DOUBLE)
-            retval++;
+            retval += expander;
     }
 
     return retval;
@@ -151,7 +152,7 @@ int main(int argc, char ** argv)
     struct chargrid g;
     struct list_head galaxies = LIST_HEAD_INIT(galaxies);
     struct galaxy * galaxy_ptr, * galaxy_ptr_save, * galaxy_pair;
-    long path_sum = 0;
+    long path_sum = 0, path_sum_part_2 = 0;
 
 #ifdef PART2
 # define PART2_STRING " part 2"
@@ -186,7 +187,8 @@ int main(int argc, char ** argv)
 
         /* pair it with every other galaxy in the list */
         list_for_each_entry(galaxy_pair, &galaxies, list) {
-            path_sum += get_shortest_path_length(&g, galaxy_ptr, galaxy_pair);
+            path_sum += get_shortest_path_length(&g, galaxy_ptr, galaxy_pair, 1);
+            path_sum_part_2 += get_shortest_path_length(&g, galaxy_ptr, galaxy_pair, 999999);
         }
 
         free(galaxy_ptr);
@@ -198,6 +200,7 @@ int main(int argc, char ** argv)
     }
 
     printf("Part 1 answer: %ld\n", path_sum);
+    printf("Part 2 answer: %ld\n", path_sum_part_2);
     return 0;
 }
 
