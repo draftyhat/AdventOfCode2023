@@ -30,6 +30,18 @@ int chargrid_get_right(char * value, int * newx, int * newy,
 int chargrid_get_left(char * value, int * newx, int * newy,
         const struct chargrid * g, int x, int y);
 
+int chargrid_get_up_left(char * value, int * newx, int * newy,
+        const struct chargrid * g, int x, int y);
+
+int chargrid_get_up_right(char * value, int * newx, int * newy,
+        const struct chargrid * g, int x, int y);
+
+int chargrid_get_down_left(char * value, int * newx, int * newy,
+        const struct chargrid * g, int x, int y);
+
+int chargrid_get_down_right(char * value, int * newx, int * newy,
+        const struct chargrid * g, int x, int y);
+
 void create_chargrid(struct chargrid * g, int width, int height, char
         default_value);
 

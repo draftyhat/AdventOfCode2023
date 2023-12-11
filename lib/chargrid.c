@@ -63,6 +63,7 @@ int chargrid_get_right(char * value, int * newx, int * newy,
         const struct chargrid * g, int x, int y)
 {
     int retval = 1;
+
     *newx = x + 1;
     *newy = y;
     if(*newx >= g->width)
@@ -86,6 +87,90 @@ int chargrid_get_left(char * value, int * newx, int * newy,
         retval = 0;
     }
     *value = g->values[*newy][*newx];
+    return retval;
+}
+
+int chargrid_get_up_left(char * value, int * newx, int * newy,
+        const struct chargrid * g, int x, int y)
+{
+    int retval = 1;
+    *newx = x - 1;
+    *newy = y - 1;
+    if(*newy < 0)
+    {
+        *newy = g->height - 1;
+        retval = 0;
+    }
+    if(*newx < 0)
+    {
+        *newx = g->width - 1;
+        retval = 0;
+    }
+    *value = g->values[*newy][*newx];
+
+    return retval;
+}
+
+int chargrid_get_up_right(char * value, int * newx, int * newy,
+        const struct chargrid * g, int x, int y)
+{
+    int retval = 1;
+    *newx = x + 1;
+    *newy = y - 1;
+    if(*newy < 0)
+    {
+        *newy = g->height - 1;
+        retval = 0;
+    }
+    if(*newx >= g->width)
+    {
+        *newx = 0;
+        retval = 0;
+    }
+    *value = g->values[*newy][*newx];
+
+    return retval;
+}
+
+int chargrid_get_down_left(char * value, int * newx, int * newy,
+        const struct chargrid * g, int x, int y)
+{
+    int retval = 1;
+    *newx = x - 1;
+    *newy = y + 1;
+    if(*newy >= g->height)
+    {
+        *newy = 0;
+        retval = 0;
+    }
+    if(*newx < 0)
+    {
+        *newx = g->width - 1;
+        retval = 0;
+    }
+    *value = g->values[*newy][*newx];
+
+    return retval;
+}
+
+int chargrid_get_down_right(char * value, int * newx, int * newy,
+        const struct chargrid * g, int x, int y)
+{
+    int retval = 1;
+    *newx = x + 1;
+    *newy = y + 1;
+    if(*newy >= g->height)
+    {
+        *newy = 0;
+        retval = 0;
+    }
+    if(*newx >= g->width)
+    {
+        *newx = 0;
+        retval = 0;
+    }
+    *value = g->values[*newy][*newx];
+
     return retval;
 }
 
