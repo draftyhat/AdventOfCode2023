@@ -3,6 +3,7 @@
 #include <string.h>
 #include <unistd.h>
 #include "chargrid.h"
+#include "get_next_line.h"
 
 
 #ifdef DEBUG_CHARGRID
@@ -227,6 +228,58 @@ int read_chargrid(FILE * fp, struct chargrid * g, char * translation)
 
         /* read next line */
         scanf_retval = fscanf(fp, "%s", line);
+        rown++;
+    }
+
+    DBGPRINT_CHARGRID("DBG chargrid: read %d rows\n", rown);
+
+    /* allocate values array for chargrid, copy pointers into that */
+    g->height = rown;
+    g->values = (char **) malloc(sizeof(g->values[0]) * rown);
+    memcpy(g->values, rows, sizeof(rows[0]) * g->height);
+
+    return 0;
+}
+
+int read_chargrid_by_line(int fd, struct chargrid * g, char * translation)
+{
+    /* read the first line, figure out how wide our chargrid is */
+    char line[4096];
+    char * rows[1000];
+    int rown = 0;
+    int line_length;
+    int i;
+
+    /* read the first line, figure out how wide our chargrid is */
+    line_length = g->width = get_next_line(fd, line, sizeof(line)) - 1;
+    DBGPRINT_CHARGRID("DBG chargrid: width %d\n", g->width);
+
+    while(line_length > 0)
+    {
+        /* allocate new row */
+        rows[rown] = (char *) malloc(sizeof(g->values[0][0]) * g->width);
+        DBGPRINT_CHARGRID("DBG chargrid: reading row %d: ", rown);
+        /* convert characters into ints for row array */
+        if(translation)
+        {
+            for(i=0; i < g->width; i++)
+            {
+                rows[rown][i] = translation[ (int) line[i]];
+                DBGPRINT_CHARGRID("%c", rows[rown][i]);
+            }
+        }
+        else
+        {
+            for(i=0; i < g->width; i++)
+            {
+                rows[rown][i] = line[i];
+                DBGPRINT_CHARGRID("%c", rows[rown][i]);
+            }
+        }
+        DBGPRINT_CHARGRID("\n");
+
+        /* read next line */
+        line_length = get_next_line(fd, line, sizeof(line)) - 1;
         rown++;
     }
 
