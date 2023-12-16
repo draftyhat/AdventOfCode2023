@@ -23,7 +23,7 @@ debug%:
 %p2:
 	make CFLAGS="-DPART2 $(CFLAGS)" $*
 
-$(YEAR)_%: $(YEAR)_%.c grid.o chargrid.o get_next_line.o
+$(YEAR)_%: $(YEAR)_%.c grid.o chargrid.o get_next_line.o location.o
 	$(CC) $(DEBUG) -Iinclude $(_CFLAGS) -o $@ $^
 
 run%: %
@@ -51,6 +51,8 @@ test30 test31: test%: $(YEAR)_%
 %rid.o: lib/%rid.c include/%rid.h
 	$(CC) -c $(_CFLAGS) -Iinclude -o $@ $<
 get_next_line.o: lib/get_next_line.c include/get_next_line.h
+	$(CC) -c $(_CFLAGS) -Iinclude -o $@ $<
+location.o: lib/location.c include/location.h
 	$(CC) -c $(_CFLAGS) -Iinclude -o $@ $<
 
 $(YEAR)_%.o: $(YEAR)_%.c
