@@ -8,8 +8,6 @@
 #include "get_next_line.h"
 #include "linux/list.h"
 
-/* 226816 */
-
 
 #ifdef DEBUG
 #define DBGPRINT(...) fprintf(stderr, __VA_ARGS__)

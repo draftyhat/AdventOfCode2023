@@ -7,8 +7,6 @@
 #include <errno.h>
 #include "chargrid.h"
 
-/* part 2: weight never hits 64, as claimed in the example */
-
 
 #ifdef DEBUG
 #define DBGPRINT(...) fprintf(stderr, __VA_ARGS__)

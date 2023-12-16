@@ -8,7 +8,6 @@
 #include "get_next_line.h"
 #include "linux/list.h"
 
-//250467095
 
 
 #ifdef DEBUG
