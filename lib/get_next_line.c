@@ -4,10 +4,14 @@
 #include <stdio.h>
 
 
-/* returns a new line
+/* returns a new field
  * -1 upon error, 0 if no more bytes
  */
-ssize_t get_next_line(int fd, char * line, const size_t linesize)
+ssize_t get_next_delimited(
+        int fd,
+        char * line,
+        const ssize_t linesize,
+        const char delimiter)
 {
     ssize_t read_bytes;
 
@@ -20,9 +24,9 @@ ssize_t get_next_line(int fd, char * line, const size_t linesize)
         return 0;
     }
 
-    /* find first newline */
+    /* find first delimiter */
     for(ssize_t i=0; i < read_bytes; i++) {
-        if(line[i] == '\n') {
+        if(line[i] == delimiter) {
             line[i] = '\0';
             /* seek file back to start of next line */
             lseek(fd, i - read_bytes + 1, SEEK_CUR);
@@ -33,3 +37,7 @@ ssize_t get_next_line(int fd, char * line, const size_t linesize)
     return -1;
 }
 
+ssize_t get_next_line(int fd, char * line, const size_t linesize)
+{
+    return get_next_delimited(fd, line, linesize, '\n');
+}
