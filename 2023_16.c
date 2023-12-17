@@ -9,8 +9,6 @@
 #include "grid.h"
 #include "location.h"
 
-/* 7557 */
-
 
 #ifdef DEBUG
 #define DBGPRINT(...) fprintf(stderr, __VA_ARGS__)
