@@ -23,8 +23,8 @@ struct vector {
 /* movement using location */
 /* movement using direction and location */
 /** @brief Move n steps in the indicated direction
- *  @param new_loc [OUT] returned calculated location
- *  @param loc [IN] starting location
+ *  @param new_loc [OUT] returned calculated location (must be valid)
+ *  @param loc [IN] starting location (must be valid)
  *  @param dir [IN] direction to move
  *  @param steps [IN] number of steps to move
  **/
@@ -35,8 +35,9 @@ void go_direction(
         int steps);
 
 /** @brief Move n steps in the indicated direction with bounds check
- *  @param new_loc [OUT] returned calculated location
- *  @param loc [IN] starting location
+ *  @param new_loc [OUT] if non-NULL, returned calculated location
+ *          even if movement is invalid
+ *  @param loc [IN] starting location (must be valid)
  *  @param dir [IN] direction to move
  *  @param steps [IN] number of steps to move
  *  @param bound_x [IN] max x bound; must have 0 <= x < bound_x

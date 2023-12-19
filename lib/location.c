@@ -25,11 +25,16 @@ int go_direction_with_bounds(
         int bound_x,
         int bound_y)
 {
-    go_direction(new_loc, loc, dir, steps);
-    if((new_loc->x >= bound_x)
-            || (new_loc->y >= bound_y)
-            || (new_loc->x < 0)
-            || (new_loc->y < 0))
+    struct location local_new_loc;
+    go_direction(&local_new_loc, loc, dir, steps);
+    if(new_loc) {
+        new_loc->x = local_new_loc.x;
+        new_loc->y = local_new_loc.y;
+    }
+    if((local_new_loc.x >= bound_x)
+            || (local_new_loc.y >= bound_y)
+            || (local_new_loc.x < 0)
+            || (local_new_loc.y < 0))
         return 0;
     return 1;
 }
